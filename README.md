@@ -1,4 +1,4 @@
-# React Amazon IVS Player MPM Example
+# React Amazon IVS Player NPM Example
 
 A example `Amazon IVS Player` implementation to React App via `npm`(not cloud).
 
