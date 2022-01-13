@@ -1,70 +1,76 @@
-# Getting Started with Create React App
+# React Amazon IVS Player MPM Example
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A example `Amazon IVS Player` implementation to React App via `npm`(not cloud).
 
-## Available Scripts
+## Getting Started
 
-In the project directory, you can run:
+In the project directory, run the following commands:
+
+### `npm install`
+
+Installs dependencies.
+
+### `cp ./node_modules/amazon-ivs-player/dist/assets/amazon-ivs-wasmworker.min.js ./public/amazon-ivs-wasmworker.min.js && cp ./node_modules/amazon-ivs-player/dist/assets/amazon-ivs-wasmworker.min.wasm ./public/amazon-ivs-wasmworker.min.wasm`
+
+Copy required files to `public` directory.
+
+### Option: `touch .env && echo REACT_APP_PLAYBACK_URL="your-ivs-playback-url.m3u8" > .env`
+
+Sets playback url. As default, a test stream:
+[https://3d26876b73d7.us-west-2.playback.live-video.net/api/video/v1/us-west-2.913157848533.channel.rkCBS9iD1eyd.m3u8](https://3d26876b73d7.us-west-2.playback.live-video.net/api/video/v1/us-west-2.913157848533.channel.rkCBS9iD1eyd.m3u8)
 
 ### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Runs the app in the development mode. Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## What is done
 
-### `npm test`
+1. Install Amazon IVS Player Web SDK via npm as below.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```console
+npm install amazon-ivs-player
+```
 
-### `npm run build`
+2. Copy required files to `public` directory from `node_modules/amazon-ivs-player/dist/assets`.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- `amazon-ivs-wasmworker.min.js`
+- `amazon-ivs-wasmworker.min.wasm`
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+3. Create MediaPlayer instance at `useEffect` and attach to `<video>` element via `useRef` .
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```js:src/App.js
+function App() {
+  const videoEl = useRef(null);
 
-### `npm run eject`
+  useEffect(() => {
+    if (isPlayerSupported) {
+      const player = create({
+        wasmWorker: "/amazon-ivs-wasmworker.min.js",    // passing files copied as above.
+        wasmBinary: "/amazon-ivs-wasmworker.min.wasm",
+      });
+      player.attachHTMLVideoElement(videoEl.current);
+      player.load(PLAYBACK_URL);
+      player.play();
+    }
+  }, []);
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+  return (
+    <div className="App">
+      <h1>React Amazon IVS Player NPM Example</h1>
+      <video className="player" ref={videoEl} playsInline controls />
+    </div>
+  );
+}
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## About Amazon IVS
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+Amazon Interactive Video Service (Amazon IVS) is a managed live streaming solution that is quick and easy to set up, and ideal for creating interactive video experiences. [Learn more](https://aws.amazon.com/ivs/).
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- [Amazon IVS docs](https://docs.aws.amazon.com/ivs/)
+- [User Guide](https://docs.aws.amazon.com/ivs/latest/userguide/)
+- [API Reference](https://docs.aws.amazon.com/ivs/latest/APIReference/)
+- [Setting Up for Streaming with Amazon Interactive Video Service](https://aws.amazon.com/blogs/media/setting-up-for-streaming-with-amazon-ivs/)
+- [Learn more about Amazon IVS on IVS.rocks](https://ivs.rocks/)
+- [View more demos like this](https://ivs.rocks/examples)
+- [Amazon IVS Player SDK Documentation](https://aws.github.io/amazon-ivs-player-docs/1.6.1/web/index.html)
